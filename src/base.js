@@ -45,6 +45,10 @@
     unbind: function() {
       Polymer.unbind.apply(this, arguments);
     },
+    deactivateBindings: function() {
+      Polymer.unobserveProperties.call(this);
+      Polymer.unbindModel.call(this, this.webkitShadowRoot);
+    },
     /**
      * Schedules an async job with timeout and returns a handle.
      * @method job

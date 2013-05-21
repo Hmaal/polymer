@@ -68,7 +68,7 @@
   function bindModel(inRoot) {
     log.bind && console.group("[%s] bindModel", this.localName);
     // TODO(sjmiles): allow 'this' to supply a 'delegate'
-    HTMLTemplateElement.bindAllMustachesFrom_(inRoot, this)
+    HTMLTemplateElement.bindAllMustachesFrom_(inRoot, this);
     log.bind && console.groupEnd();
   }
 
@@ -79,6 +79,17 @@
       Polymer.bindProperties(this, property, model, path);
     } else {
       HTMLElement.prototype.bind.apply(this, arguments);
+    }
+  }
+  
+  function unbindModel(inRoot) {
+    unbindNodeRecursively(inRoot);
+  }
+  
+  function unbindNodeRecursively(node) {
+    node.unbindAll();
+    for (var child = node.firstChild; child; child = child.nextSibling) {
+      unbindNodeRecursively(child);
     }
   }
   
@@ -105,6 +116,7 @@
   Polymer.unbind = unbind;
   Polymer.getBinding = getBinding;
   Polymer.bindModel = bindModel;
+  Polymer.unbindModel = unbindModel;
   Polymer.bindPattern = mustachePattern;
   
 })();

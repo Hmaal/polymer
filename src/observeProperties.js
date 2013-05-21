@@ -15,7 +15,10 @@
   
   var OBSERVE_SUFFIX = 'Changed';
  
+  var observersTable = new SideTable('observersTable');
+ 
   function observeProperties() {
+    observersTable.set(this, []);
     for (var p in this) {
       observeProperty.call(this, p);
     }
@@ -28,7 +31,15 @@
         log.data && console.log('[%s#%s] watch: [%s] now [%s] was [%s]', this.localName, this.node.id || '', inName, this[inName], inOld);
         propertyChanged.call(this, inName, inOld);
       }.bind(this));
+      observersTable.get(this).push(observer);
     }
+  }
+  
+  function unobserveProperties() {
+    observersTable.get(this).forEach(function(p) {
+      p.close();
+    });
+    observersTable.set(this, []);
   }
 
   function isObservable(inName) {
@@ -47,5 +58,6 @@
   
   // exports
   Polymer.observeProperties = observeProperties;
+  Polymer.unobserveProperties = unobserveProperties;
 
 })();
