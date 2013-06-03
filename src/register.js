@@ -43,8 +43,10 @@
       this.super();
       staticInstallTemplate.call(this, inElement);
     };
-    // install readyCallback
+    // install callbacks
     prototype.readyCallback = readyCallback;
+    prototype.insertedCallback = insertedCallback;
+    prototype.removedCallback = removedCallback;
     // parse declared on-* delegates into imperative form
     Polymer.parseHostEvents(inElement.attributes, prototype);
     // parse attribute-attributes
@@ -118,11 +120,30 @@
     // add host-events...
     var hostEvents = Polymer.accumulateHostEvents.call(this);
     Polymer.bindAccumulatedHostEvents.call(this, hostEvents);
+    // unwind bindings... they will be wound in inserted or users can
+    // manually call windBindings.
+    this.unwindBindings();
     // invoke user 'ready'
     if (this.ready) {
       this.ready();
     }
   };
+  
+  function insertedCallback() {
+    this.windBindings(true);
+    // invoke user 'inserted'
+    if (this.inserted) {
+      this.inserted();
+    }
+  }
+  
+  function removedCallback() {
+    this.unwindBindings();
+    // invoke user 'removed'
+    if (this.removed) {
+      this.removed();
+    }
+  }
 
   // user utility 
 

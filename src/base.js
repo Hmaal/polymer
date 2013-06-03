@@ -54,6 +54,43 @@
       Polymer.unbindAll.apply(this, arguments);
     },
     /**
+     * Ensures MDV bindings remain active.
+     * Typically, it's not necessary to call this method. Polymer
+     * automatically manages binding state when elements are inserted
+     * and removed from the document. 
+     * 
+     * However, if an element is created and not inserted into the document, 
+     * windBindings should be called to ensure bindings remain active. 
+     * Otherwise bindings will deactivate asynchronously so that the element 
+     * may be garbage collected. Please note that if windBindings is called
+     * manually and the element is never inserted into the document, then 
+     * unwindBindings must be called to dispose of the element.
+     * 
+     * @method windBindings
+     * @param {Boolean} [preventCascade] If true, windBindings will not cascade
+     * to call windBindings on shadowRoot children. In the case described above,
+     * and in general in application code, this should not be set to true.
+     */
+    windBindings: function(preventCascade) {
+      Polymer.windBindings.apply(this, arguments);
+    },
+    /**
+     * Schedules MDV bindings to asynchronously become inactive.
+     *
+     * Typically, it's not necessary to call this method. Polymer
+     * automatically manages binding state when elements are inserted
+     * and removed from the document. 
+     * 
+     * Only when an element is created and not inserted into the document
+     * is it necessary to call windBindings so bindings are not removed. It's
+     * only in this case that unwindBindings need be called so that the element
+     * may be disposed of when its no longer needed.
+     * @method unwindBindings
+     */
+    unwindBindings: function() {
+      Polymer.unwindBindings.apply(this, arguments);
+    },
+    /**
      * Schedules an async job with timeout and returns a handle.
      * @method job
      * @param {Polymer.Job} [job] A job handle if re-registering.

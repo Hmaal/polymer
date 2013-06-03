@@ -85,8 +85,18 @@
   }
   
   function unbindAll() {
-    Polymer.unregisterObserversOfType(this, 'property');
-    HTMLElement.prototype.unbindAll.apply(this, arguments);
+    if (!this.__isUnbound) {
+      Polymer.unregisterObserversOfType(this, 'property');
+      HTMLElement.prototype.unbindAll.apply(this, arguments);
+      // unbind shadowRoot
+      Polymer.forSubtree(this.webkitShadowRoot, function(n) {
+        n.unbindAll();
+        // stop if the element reports itself as unbound (assume it has taken
+        // care of its shadowRoot in this case).
+        return n.__isUnbound;
+      });
+      this.__isUnbound = true;
+    }
   }
   
   var mustachePattern = /\{\{([^{}]*)}}/;
